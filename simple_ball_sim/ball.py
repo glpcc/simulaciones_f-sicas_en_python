@@ -10,7 +10,7 @@ class Ball():
         self.radious = radious
         self.velocity = initial_vel
         self.position = initial_pos
-        self.color = [random.randint(0,255) for i in range(3)]
+        self.color = [255 for i in range(3)]
     def update(self):
         self.position += self.velocity
 
@@ -19,7 +19,7 @@ class Ball():
     
     def test_collisions_with_other_balls(self,balls):
         for ball in balls:
-            if np.linalg.norm([ball[0]-self.position[0],ball[1]-self.position[1]]) <= self.radious:
+            if np.linalg.norm([ball.position[0]-self.position[0],ball.position[1]-self.position[1]]) <= self.radious*2:
                 self.elastic_collision(ball)
 
 
@@ -32,6 +32,8 @@ class Ball():
                 if np.linalg.norm([border[0][0]-self.position[0],border[0][1]-self.position[1]])-self.radious <= border_length and np.linalg.norm([(border[0][0]+border[1][0])-self.position[0],(border[0][1]+border[1][1])-self.position[1]])-self.radious <= border_length:
                     border_perp = np.array([border[1][1],-border[1][0]])
                     self.velocity -= 2*((np.dot(border_perp,self.velocity)/border_length**(2))*border_perp)
+                    return True
+        return False
                     
     def elastic_collision(self,ball):
         self.velocity,ball.velocity = ball.velocity,self.velocity
@@ -41,7 +43,7 @@ class Ball():
         border_point2y = border[0][1] + border[1][1]
         
         # use the formula of the distance from a line to a point
-        distance = abs((border_point2y-border[0][0])*(border[0][1]-self.position[1])-(border[0][0]-self.position[0])*(border_point2y-border[0][1]))/np.linalg.norm([border_point2x-border[0][0],border_point2y-border[0][1]])
+        distance = abs((border_point2x-border[0][0])*(border[0][1]-self.position[1])-(border[0][0]-self.position[0])*(border_point2y-border[0][1]))/np.linalg.norm([border_point2x-border[0][0],border_point2y-border[0][1]])
         return distance
 
 
